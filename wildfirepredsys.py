@@ -8,7 +8,7 @@ from sklearn.preprocessing import MinMaxScaler
 from matplotlib import colors
 import glob
 
-column_labels = ["tmmx", "tmmn", "elevation", "pr", "NDVI", "sph", "th", "vs", "erc", "population", "pdsi", "PrevFireMask", "FireMask"]
+#column_labels = ["tmmx", "tmmn", "elevation", "pr", "NDVI", "sph", "th", "vs", "erc", "population", "pdsi", "PrevFireMask", "FireMask"]
 #Max Temps, Min Temps, Elevation, Precipitation, Vegetation, Humidity, Wind Direction, Wind Speed, Energy Release Component, Population, Drought, Previous Fire Mask, Fire Mask
 
 train_files = glob.glob("wildfire_data_train_*.csv")
@@ -20,15 +20,20 @@ def visualise_predictions(y_true, y_pred):
     CMAP = colors.ListedColormap(['black', 'gray', 'red'])
     BOUNDS = [-1, -0.1, 0.001, 1]
     NORM = colors.BoundaryNorm(BOUNDS, CMAP.N)
-    num_tests = 6 #Max 200
-    sample_index = 24
-    fig, axes = plt.subplots(num_tests, 2, figsize=(10, 5 * num_tests))
+    # Sets the number of tests to display to the screen
+    num_tests = 1 # Max 200
+    # Sets the index from which to start displaying tests
+    # If the display index is set to say 5 and the number of tests to display is set to 5 then tests 5, 6, 7, 8, 9 will be displayed.
+    display_index = 7
 
+    fig, axes = plt.subplots(num_tests, 2, figsize=(10, 5 * num_tests))
+    
+    # Ensure axes is 2D for single test case
     if num_tests == 1:
-        axes = np.array([[axes[0], axes[1]]])  # Ensure axes is 2D for single test case
+        axes = np.array([[axes[0], axes[1]]])  
     
     for i in range(num_tests):
-        start_index = (i + sample_index) * 4096 #7, 20, 24, 95, 37 (ok), 48 (ok), 49 (ok), 60 (ok)(test)
+        start_index = (i + display_index) * 4096
         end_index = start_index + 4096
         
         new_y_true= np.array(y_true[start_index:end_index]).reshape(64, 64)
@@ -43,7 +48,7 @@ def visualise_predictions(y_true, y_pred):
         axes[i, 1].imshow(new_y_pred, cmap=CMAP, norm=NORM)
         axes[i, 1].set_axis_off()
         #accuracy = accuracy_score(new_y_true, new_y_pred, normalize=False)
-        print(f"Test: {i + sample_index} Accuracy: {accuracy}")
+        print(f"Test: {i + display_index} Accuracy: {accuracy}")
     
     plt.show()
 
