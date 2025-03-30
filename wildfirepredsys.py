@@ -132,9 +132,9 @@ X_train = train_data.iloc[:, :11]
 X_train = scaler.fit_transform(X_train)
 # Doesn't normalise the twelfth column as the data is already normalised
 X_train_remaining = train_data.iloc[:, 11:12].values
-# Select first twelve columns as features
+# Selects first twelve columns as features
 X_train = np.hstack((X_train, X_train_remaining))
-# Select thirteenth column as the target feature
+# Selects thirteenth column as the target feature
 y_train = train_data.iloc[:, 12]
 
 # Trains the specified models
@@ -155,9 +155,9 @@ X_test = test_data.iloc[:, :11]
 X_test = scaler.transform(X_test)
 # Doesn't normalise the twelfth column as the data is already normalised
 X_test_remaining = test_data.iloc[:, 11:12].values
-# Select first twelve columns as features
+# Selects first twelve columns as features
 X_test = np.hstack((X_test, X_test_remaining))
-# Select thirteenth column as the target feature
+# Selects thirteenth column as the target feature
 y_test = test_data.iloc[:, 12]
 
 # Makes predictions using each model
