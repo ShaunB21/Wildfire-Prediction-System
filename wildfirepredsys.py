@@ -175,6 +175,3 @@ print(f"Accuracy: {accuracy}")
 
 # Visualises the predictions and saves the figures to a folder
 visualise_predictions(y_test, y_pred)
-
-ConfusionMatrixDisplay.from_predictions(y_test, y_pred, labels=(0, 1))
-visualise_predictions(y_test, y_pred)
