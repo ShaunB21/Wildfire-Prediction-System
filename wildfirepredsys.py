@@ -73,7 +73,7 @@ def visualise_predictions(y_true, y_pred):
     CMAP = colors.ListedColormap(['black', 'gray', 'red'])
     BOUNDS = [-1, -0.1, 0.001, 1]
     NORM = colors.BoundaryNorm(BOUNDS, CMAP.N)
-    # Create the output directory if it does not exist
+    # Creates the output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
     
     num_tests = 200
