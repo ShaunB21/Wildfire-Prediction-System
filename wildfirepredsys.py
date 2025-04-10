@@ -1,4 +1,3 @@
-import re
 import tensorflow as tf
 import pandas as pd
 import glob
@@ -7,8 +6,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import ConfusionMatrixDisplay
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, auc, ConfusionMatrixDisplay
 from sklearn.preprocessing import MinMaxScaler
 from matplotlib import colors
 import matplotlib.pyplot as plt
@@ -70,7 +68,7 @@ test_dataframes = process_tfrecords(pattern, 100)
 # Visualises the data as 64*64 pixel images
 def visualise_predictions(y_true, y_pred):    
     output_dir = "predictions/modelv2"
-    CMAP = colors.ListedColormap(['black', 'gray', 'red'])
+    CMAP = colors.ListedColormap(["black", "gray", "red"])
     BOUNDS = [-1, -0.1, 0.001, 1]
     NORM = colors.BoundaryNorm(BOUNDS, CMAP.N)
     # Creates the output directory if it doesn't exist
@@ -96,7 +94,7 @@ def visualise_predictions(y_true, y_pred):
         
         # Saves the figure
         image_path = os.path.join(output_dir, f"prediction_{i}.png")
-        plt.savefig(image_path, bbox_inches='tight')
+        plt.savefig(image_path, bbox_inches="tight")
         # Closes the figure to free memory
         plt.close(fig)
         
@@ -140,7 +138,7 @@ y_train = train_data.iloc[:, 12]
 # Trains the specified models
 model1 = LogisticRegression(max_iter=5000)
 model2 = DecisionTreeClassifier(max_depth=5)
-model3 = SVC(kernel='rbf', gamma='scale', C=1)
+model3 = SVC(kernel="rbf", gamma="scale", C=1)
 
 models = [model1, model2, model3]
 
@@ -171,7 +169,29 @@ y_pred = find_best(y_test, y_preds)
 
 # Scores the accuracy
 accuracy = accuracy_score(y_test, y_pred)
-print(f"Accuracy: {accuracy}")
+precision = precision_score(y_test, y_pred, labels = (0, 1), average = None)
+recall = recall_score(y_test, y_pred, labels = (0, 1), average = None)
+f1 = f1_score(y_test, y_pred, labels = (0, 1), average = None)
+
+print(f"Accuracy: {accuracy}\nPrecision: {precision}\nRecall: {recall}\nf1: {f1}")
 
 # Visualises the predictions and saves the figures to a folder
 visualise_predictions(y_test, y_pred)
+
+# Displays a confusion matrix based on the true and predicted values
+matrix = ConfusionMatrixDisplay.from_predictions(y_test, y_pred, labels=(0, 1))
+plt.show()
+
+# Displays a ROC curve based on the true and predicted values
+fpr, tpr, threshold = roc_curve(y_test, y_pred, pos_label = 1)
+roc_auc = auc(fpr, tpr)
+plt.figure(figsize=(8, 6))
+plt.plot(fpr, tpr, color="blue", lw=2, label=f'ROC curve (Area Under Curve = {roc_auc:.2f})')
+plt.plot([0, 1], [0, 1], color="red", lw=2, linestyle="--")
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.0])
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("Receiver Operating Characteristic")
+plt.legend(loc="lower right")
+plt.show()
